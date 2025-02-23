@@ -12,7 +12,7 @@
         android:id="@+id/logoImage"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:src="@drawable/metroLogo"
+        android:src="@drawable/metrologo"
         android:contentDescription="Logo de la app"
         android:layout_marginBottom="20dp"/>
 
