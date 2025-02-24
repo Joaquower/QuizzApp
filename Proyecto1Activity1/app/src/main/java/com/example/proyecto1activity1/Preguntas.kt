@@ -10,7 +10,7 @@ fun obtenerPreguntas(): List<Categoria> {
     return listOf(
         Categoria(
             nombre = "Sherlock Holmes",
-            imagen = "geografia.jpg",
+            imagen = "geografia",
             preguntas = listOf(
                 Pregunta(
                     texto = "¿Cuál es la capital de Francia?",
@@ -61,7 +61,7 @@ fun obtenerPreguntas(): List<Categoria> {
         ),
         Categoria(
             nombre = "Harry Potter",
-            imagen = "historia.jpg",
+            imagen = "historia",
             preguntas = listOf(
                 Pregunta(
                     texto = "¿Quién fue el primer presidente de EE. UU.?",
@@ -112,7 +112,7 @@ fun obtenerPreguntas(): List<Categoria> {
         ),
         Categoria(
             nombre = "Poesia",
-            imagen = "historia.jpg",
+            imagen = "historia",
             preguntas = listOf(
                 Pregunta(
                     texto = "¿Quién fue el primer presidente de EE. UU.?",
@@ -163,7 +163,7 @@ fun obtenerPreguntas(): List<Categoria> {
         ),
         Categoria(
             nombre = "Aviones",
-            imagen = "historia.jpg",
+            imagen = "historia",
             preguntas = listOf(
                 Pregunta(
                     texto = "¿Quién fue el primer presidente de EE. UU.?",
@@ -214,7 +214,7 @@ fun obtenerPreguntas(): List<Categoria> {
         ),
         Categoria(
             nombre = "Flores",
-            imagen = "historia.jpg",
+            imagen = "historia",
             preguntas = listOf(
                 Pregunta(
                     texto = "¿Quién fue el primer presidente de EE. UU.?",

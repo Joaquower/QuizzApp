@@ -90,14 +90,16 @@ class JuegoActivity : AppCompatActivity() {
         preguntaTextView.text = pregunta.texto
 
         // Mostrar la imagen del tema
-        val imagenId = resources.getIdentifier(pregunta.temaImagen, "drawable", packageName)
+        val categoria = obtenerPreguntas()[0]  // Acceder a la primera categoría
+        val imagenId = resources.getIdentifier(categoria.imagen, "drawable", packageName)
+
         temaImageView.setImageResource(imagenId)
 
         // Mostrar las respuestas dependiendo de la dificultad
         val respuestas = pregunta.respuestas.shuffled()
         val respuestasLimitadas = when (dificultad) {
             "FACIL" -> respuestas.take(2)
-            "NORMAL" -> respuestas.take(3)
+            "MEDIO" -> respuestas.take(3)
             "DIFICIL" -> respuestas.take(4)
             else -> respuestas
         }
@@ -126,7 +128,13 @@ class JuegoActivity : AppCompatActivity() {
             btnRespuesta3.setOnClickListener { verificarRespuesta(respuestasLimitadas[2]) }
             btnRespuesta4.setOnClickListener { verificarRespuesta(respuestasLimitadas[3]) }
         }
+
+        // Verificar si el jugador ya ha respondido todas las preguntas
+        if (preguntaActual == preguntas.size - 1) {
+            terminarJuego() // Llamar a terminarJuego si ya se contestaron todas las preguntas
+        }
     }
+
 
     private fun verificarRespuesta(respuesta: Respuesta) {
         // Marcar la pregunta como contestada
@@ -190,12 +198,13 @@ class JuegoActivity : AppCompatActivity() {
 
     // Enviar los resultados de vuelta a MainActivity
     private fun enviarResultados() {
-        val intent = Intent()
+        val intent = Intent(this, ResultadosActivity::class.java) // Cambiar MainActivity por Activity4
         intent.putExtra("respuestasCorrectas", respuestasCorrectas)  // Pasar el número de respuestas correctas
         intent.putExtra("totalPreguntas", totalPreguntas)  // Pasar el número total de preguntas
-        setResult(RESULT_OK, intent)  // Devolver los resultados a MainActivity
-        finish()  // Finalizar la actividad
+        startActivity(intent)  // Iniciar Activity4 con los resultados
+        finish()  // Finalizar JuegoActivity
     }
+
 
     // Llamar a esta función cuando el jugador termine las preguntas o al hacer clic en un botón "Terminar"
     private fun terminarJuego() {

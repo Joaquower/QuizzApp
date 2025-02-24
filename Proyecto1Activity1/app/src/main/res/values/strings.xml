@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Proyecto 1 Activity #1</string>
+
+    <string-array name="dificultades">
+        <item>FACIL</item>
+        <item>MEDIO</item>
+        <item>DIFICIL</item>
+    </string-array>
 </resources>
