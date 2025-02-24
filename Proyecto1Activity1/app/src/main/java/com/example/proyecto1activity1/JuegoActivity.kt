@@ -1,6 +1,7 @@
 package com.example.proyecto1activity1
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -9,21 +10,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
+data class RespuestaEstado(val preguntaIndex: Int, val fueCorrecta: Boolean)
+
 class JuegoActivity : AppCompatActivity() {
 
     private lateinit var categorias: List<Categoria>
     private var preguntas: List<Pregunta> = emptyList()
     private var preguntaActual = 0
-    private var preguntasContestadas = mutableListOf<Int>() // Guardar preguntas contestadas
+    private var preguntasContestadas = mutableSetOf<RespuestaEstado>()
     private var pistasDisponibles = 3
     private var respuestasCorrectasConsecutivas = 0
-    private var respuestasCorrectas = 0 // Cantidad de respuestas correctas
-    private var totalPreguntas = 10 // Número total de preguntas a responder
-    private var dificultad: String = "" // FACIL, NORMAL, DIFICIL
+    private var respuestasCorrectas = 0
+    private var totalPreguntas = 10
+    private var dificultad: String = ""
 
-    // UI elements
     private lateinit var preguntaTextView: TextView
-    private lateinit var temaImageView: ImageView // Para la imagen del tema
+    private lateinit var temaImageView: ImageView
     private lateinit var btnRespuesta1: Button
     private lateinit var btnRespuesta2: Button
     private lateinit var btnRespuesta3: Button
@@ -37,18 +39,16 @@ class JuegoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_juego)
 
-        // Recibir datos desde MainActivity
-        val intent = intent
+        // Cargar la dificultad y el número de pistas desde el Intent
         dificultad = intent.getStringExtra("dificultad") ?: "FACIL"
-        pistasDisponibles = intent.getIntExtra("pistas", 3)  // Recupera las pistas, 3 es el valor por defecto
+        pistasDisponibles = intent.getIntExtra("pistas", 3)
 
-        // Inicializar las preguntas
+        // Inicialización de las vistas
         categorias = obtenerPreguntas()
         preguntas = obtenerPreguntasAleatorias()
 
-        // Inicializar vistas
         preguntaTextView = findViewById(R.id.preguntaTextView)
-        temaImageView = findViewById(R.id.temaImageView) // ImageView para la imagen del tema
+        temaImageView = findViewById(R.id.temaImageView)
         btnRespuesta1 = findViewById(R.id.btnRespuesta1)
         btnRespuesta2 = findViewById(R.id.btnRespuesta2)
         btnRespuesta3 = findViewById(R.id.btnRespuesta3)
@@ -58,30 +58,23 @@ class JuegoActivity : AppCompatActivity() {
         btnPista = findViewById(R.id.btnPista)
         puntosTextView = findViewById(R.id.puntosTextView)
 
-        // Mostrar la primera pregunta
+        // Mostrar la cantidad de pistas desde el principio
+        puntosTextView.text = "Pistas: $pistasDisponibles"
+
         mostrarPregunta()
 
-        // Lógica del botón Next
         btnNext.setOnClickListener {
-            if (preguntaActual < preguntas.size - 1) {
-                preguntaActual++
-                mostrarPregunta()
-            }
+            preguntaActual = (preguntaActual + 1) % preguntas.size
+            mostrarPregunta()
         }
 
-        // Lógica del botón Prev
         btnPrev.setOnClickListener {
-            if (preguntaActual > 0) {
-                preguntaActual--
-                mostrarPregunta()
-            }
+            preguntaActual = if (preguntaActual == 0) preguntas.size - 1 else preguntaActual - 1
+            mostrarPregunta()
         }
 
-        // Lógica del botón Pista
         btnPista.setOnClickListener {
-            if (pistasDisponibles > 0) {
-                aplicarPista()
-            }
+            if (pistasDisponibles > 0) aplicarPista()
         }
     }
 
@@ -89,125 +82,150 @@ class JuegoActivity : AppCompatActivity() {
         val pregunta = preguntas[preguntaActual]
         preguntaTextView.text = pregunta.texto
 
-        // Mostrar la imagen del tema
-        val categoria = obtenerPreguntas()[0]  // Acceder a la primera categoría
+        val categoriaNombre = obtenerCategoriaDePregunta(pregunta, categorias)
+        val categoria = categorias.find { it.nombre == categoriaNombre } ?: categorias[0]
         val imagenId = resources.getIdentifier(categoria.imagen, "drawable", packageName)
-
         temaImageView.setImageResource(imagenId)
 
-        // Mostrar las respuestas dependiendo de la dificultad
-        val respuestas = pregunta.respuestas.shuffled()
-        val respuestasLimitadas = when (dificultad) {
-            "FACIL" -> respuestas.take(2)
-            "MEDIO" -> respuestas.take(3)
-            "DIFICIL" -> respuestas.take(4)
-            else -> respuestas
+        // Obtener las respuestas (correctas e incorrectas)
+        val respuestasCorrectas = pregunta.respuestas.filter { it.correcta }
+        val respuestasIncorrectas = pregunta.respuestas.filter { !it.correcta }
+
+        // Respuestas que se van a mostrar
+        val respuestasLimitadas: List<Respuesta> = when (dificultad) {
+            "FACIL" -> {
+                val respuestasSeleccionadas = mutableListOf<Respuesta>()
+                respuestasSeleccionadas.add(respuestasCorrectas.random()) // Agregar 1 correcta
+                respuestasSeleccionadas.addAll(respuestasIncorrectas.shuffled().take(1)) // Agregar 1 incorrecta
+                respuestasSeleccionadas.shuffled() // Mezclar respuestas
+            }
+            "MEDIO" -> {
+                val respuestasSeleccionadas = mutableListOf<Respuesta>()
+                respuestasSeleccionadas.add(respuestasCorrectas.random()) // Agregar 1 correcta
+                respuestasSeleccionadas.addAll(respuestasIncorrectas.shuffled().take(2)) // Agregar 2 incorrectas
+                respuestasSeleccionadas.shuffled() // Mezclar respuestas
+            }
+            "DIFICIL" -> {
+                (respuestasCorrectas + respuestasIncorrectas).shuffled().take(4)
+            }
+            else -> respuestasCorrectas + respuestasIncorrectas
         }
 
-        btnRespuesta1.text = respuestasLimitadas[0].texto
-        btnRespuesta2.text = respuestasLimitadas.getOrNull(1)?.texto
-        btnRespuesta3.text = respuestasLimitadas.getOrNull(2)?.texto
-        btnRespuesta4.text = respuestasLimitadas.getOrNull(3)?.texto
+        val botones = listOf(btnRespuesta1, btnRespuesta2, btnRespuesta3, btnRespuesta4)
+        botones.forEachIndexed { index, button ->
+            if (index < respuestasLimitadas.size) {
+                button.text = respuestasLimitadas[index].texto
+                button.visibility = View.VISIBLE
+                button.setBackgroundColor(Color.LTGRAY)
+                button.isEnabled = !preguntasContestadas.any { it.preguntaIndex == preguntaActual }  // Deshabilita si ya fue contestada
+                button.setOnClickListener { verificarRespuesta(respuestasLimitadas[index], button) }
 
-        // Deshabilitar las respuestas si ya se contestó la pregunta
-        if (preguntasContestadas.contains(preguntaActual)) {
-            btnRespuesta1.isEnabled = false
-            btnRespuesta2.isEnabled = false
-            btnRespuesta3.isEnabled = false
-            btnRespuesta4.isEnabled = false
-        } else {
-            // Si no está contestada, habilitar botones
-            btnRespuesta1.isEnabled = true
-            btnRespuesta2.isEnabled = true
-            btnRespuesta3.isEnabled = true
-            btnRespuesta4.isEnabled = true
-
-            // Lógica para verificar la respuesta seleccionada
-            btnRespuesta1.setOnClickListener { verificarRespuesta(respuestasLimitadas[0]) }
-            btnRespuesta2.setOnClickListener { verificarRespuesta(respuestasLimitadas[1]) }
-            btnRespuesta3.setOnClickListener { verificarRespuesta(respuestasLimitadas[2]) }
-            btnRespuesta4.setOnClickListener { verificarRespuesta(respuestasLimitadas[3]) }
+                // Si la pregunta ya fue respondida, mostrar el color correspondiente en el fondo solo en la respuesta seleccionada
+                val respuestaEstado = preguntasContestadas.find { it.preguntaIndex == preguntaActual }
+                if (respuestaEstado != null && respuestaEstado.preguntaIndex == preguntaActual) {
+                    // Pintar solo la respuesta seleccionada
+                    if (button.text == respuestasLimitadas.find { it.correcta }?.texto) {
+                        button.setBackgroundColor(Color.GREEN)
+                    } else {
+                        button.setBackgroundColor(Color.RED)
+                    }
+                }
+            } else {
+                button.visibility = View.GONE
+            }
         }
 
-        // Verificar si el jugador ya ha respondido todas las preguntas
-        if (preguntaActual == preguntas.size - 1) {
-            terminarJuego() // Llamar a terminarJuego si ya se contestaron todas las preguntas
+        // Si es la última pregunta, ir a la actividad de resultados
+        if (preguntaActual == preguntas.size - 1 && preguntasContestadas.size == preguntas.size) {
+            terminarJuego()
         }
     }
 
+    private fun verificarRespuesta(respuesta: Respuesta, botonSeleccionado: Button) {
+        if (preguntasContestadas.any { it.preguntaIndex == preguntaActual }) return  // Evita respuestas repetidas
 
-    private fun verificarRespuesta(respuesta: Respuesta) {
-        // Marcar la pregunta como contestada
-        preguntasContestadas.add(preguntaActual)
+        val fueCorrecta = respuesta.correcta
+        preguntasContestadas.add(RespuestaEstado(preguntaActual, fueCorrecta))
 
-        // Verificar si la respuesta es correcta
-        if (respuesta.correcta) {
+        if (fueCorrecta) {
             respuestasCorrectas++
             respuestasCorrectasConsecutivas++
-            if (respuestasCorrectasConsecutivas % 2 == 0) {
-                pistasDisponibles++ // Bonificar una pista por cada dos respuestas correctas consecutivas
-            }
+            botonSeleccionado.setBackgroundColor(Color.GREEN)
+            if (respuestasCorrectasConsecutivas % 2 == 0) pistasDisponibles++
             Toast.makeText(this, "¡Correcto!", Toast.LENGTH_SHORT).show()
         } else {
             respuestasCorrectasConsecutivas = 0
+            botonSeleccionado.setBackgroundColor(Color.RED)
             Toast.makeText(this, "Incorrecto", Toast.LENGTH_SHORT).show()
+            marcarCorrecta()
         }
 
-        // Deshabilitar los botones después de responder
-        btnRespuesta1.isEnabled = false
-        btnRespuesta2.isEnabled = false
-        btnRespuesta3.isEnabled = false
-        btnRespuesta4.isEnabled = false
-
-        // Actualizar la cantidad de pistas disponibles y mostrarla
+        deshabilitarBotones()
         puntosTextView.text = "Pistas: $pistasDisponibles"
     }
 
-    private fun aplicarPista() {
-        if (pistasDisponibles > 0) {
-            pistasDisponibles--
+    private fun marcarCorrecta() {
+        val pregunta = preguntas[preguntaActual]
+        val botones = listOf(btnRespuesta1, btnRespuesta2, btnRespuesta3, btnRespuesta4)
+        botones.forEach { boton ->
+            if (boton.text == pregunta.respuestas.find { it.correcta }?.texto) {
+                boton.setBackgroundColor(Color.GREEN)
+            }
+        }
+    }
 
-            // Aquí aplicamos la lógica para eliminar una respuesta incorrecta
-            // Si hay más de dos respuestas, eliminamos una incorrecta
+    private fun deshabilitarBotones() {
+        val botones = listOf(btnRespuesta1, btnRespuesta2, btnRespuesta3, btnRespuesta4)
+        botones.forEach { it.isEnabled = false }
+    }
+
+    private fun aplicarPista() {
+        if (preguntasContestadas.any { it.preguntaIndex == preguntaActual }) return // No aplicar pistas a preguntas ya contestadas
+
+        if (preguntas.size <= 2) {
+            // Si quedan 2 preguntas o menos, responder automáticamente la pregunta
+            val respuestaCorrecta = preguntas[preguntaActual].respuestas.find { it.correcta }
+            val boton = listOf(btnRespuesta1, btnRespuesta2, btnRespuesta3, btnRespuesta4)
+                .firstOrNull { it.text == respuestaCorrecta?.texto }
+            boton?.setBackgroundColor(Color.GREEN)
+            preguntasContestadas.add(RespuestaEstado(preguntaActual, true))
+            respuestasCorrectas++
+            deshabilitarBotones()
+            Toast.makeText(this, "Pregunta contestada automáticamente.", Toast.LENGTH_SHORT).show()
+        } else {
+            pistasDisponibles--
             val pregunta = preguntas[preguntaActual]
             val respuestasIncorrectas = pregunta.respuestas.filter { !it.correcta }
+
             if (respuestasIncorrectas.size > 1) {
                 val respuestaIncorrecta = respuestasIncorrectas.random()
-                // Aquí marcarías la respuesta como eliminada o la ocultarías
-                // (Por ejemplo, deshabilitar el botón correspondiente)
-                Toast.makeText(this, "Pista aplicada, respuesta incorrecta eliminada", Toast.LENGTH_SHORT).show()
-            } else {
-                // Si solo quedan dos respuestas, la pista responde la pregunta
-                Toast.makeText(this, "Pista aplicada, respuesta correcta revelada", Toast.LENGTH_SHORT).show()
-                // Aquí, revelas la respuesta correcta
+                val botones = listOf(btnRespuesta1, btnRespuesta2, btnRespuesta3, btnRespuesta4)
+                botones.firstOrNull { it.text == respuestaIncorrecta.texto }?.visibility = View.INVISIBLE
+                Toast.makeText(this, "Pista aplicada", Toast.LENGTH_SHORT).show()
             }
-
-            // Actualizar la cantidad de pistas
             puntosTextView.text = "Pistas: $pistasDisponibles"
         }
     }
 
     private fun obtenerPreguntasAleatorias(): List<Pregunta> {
-        // Seleccionamos 10 preguntas aleatorias de un total de 25
-        val todasLasPreguntas = mutableListOf<Pregunta>()
-        categorias.forEach { categoria ->
-            todasLasPreguntas.addAll(categoria.preguntas)
-        }
+        val todasLasPreguntas = categorias.flatMap { it.preguntas }
         return todasLasPreguntas.shuffled().take(10)
     }
 
-    // Enviar los resultados de vuelta a MainActivity
-    private fun enviarResultados() {
-        val intent = Intent(this, ResultadosActivity::class.java) // Cambiar MainActivity por Activity4
-        intent.putExtra("respuestasCorrectas", respuestasCorrectas)  // Pasar el número de respuestas correctas
-        intent.putExtra("totalPreguntas", totalPreguntas)  // Pasar el número total de preguntas
-        startActivity(intent)  // Iniciar Activity4 con los resultados
-        finish()  // Finalizar JuegoActivity
+    private fun terminarJuego() {
+        val intent = Intent(this, ResultadosActivity::class.java)
+        intent.putExtra("respuestasCorrectas", respuestasCorrectas)
+        intent.putExtra("totalPreguntas", totalPreguntas)
+        startActivity(intent)
+        finish()
     }
 
-
-    // Llamar a esta función cuando el jugador termine las preguntas o al hacer clic en un botón "Terminar"
-    private fun terminarJuego() {
-        enviarResultados()
+    private fun obtenerCategoriaDePregunta(pregunta: Pregunta, categorias: List<Categoria>): String? {
+        for (categoria in categorias) {
+            if (categoria.preguntas.contains(pregunta)) {
+                return categoria.nombre
+            }
+        }
+        return null
     }
 }

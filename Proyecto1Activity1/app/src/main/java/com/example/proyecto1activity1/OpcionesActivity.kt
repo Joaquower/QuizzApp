@@ -3,16 +3,14 @@ package com.example.proyecto1activity1
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.SeekBar
-import android.widget.Spinner
+import android.widget.*
 
 class OpcionesActivity : Activity() {
 
     private lateinit var spinnerDificultad: Spinner
     private lateinit var seekBarPistas: SeekBar
     private lateinit var btnGuardar: Button
+    private lateinit var textViewPistasValor: TextView  // Nuevo TextView para mostrar el valor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,21 +19,22 @@ class OpcionesActivity : Activity() {
         spinnerDificultad = findViewById(R.id.spinnerDificultad)
         seekBarPistas = findViewById(R.id.seekBarPistas)
         btnGuardar = findViewById(R.id.btnGuardar)
+        textViewPistasValor = findViewById(R.id.textViewPistasValor) // Referencia al nuevo TextView
 
         // Cargar los valores en el Spinner
         val adapter = ArrayAdapter.createFromResource(
             this,
-            R.array.dificultades, // Asegúrate de tener este array en strings.xml
+            R.array.dificultades,
             android.R.layout.simple_spinner_item
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerDificultad.adapter = adapter
 
-        // Obtener los valores pasados desde MainActivity
+        // Obtener valores pasados desde MainActivity
         val dificultad = intent.getStringExtra("dificultad") ?: "FACIL"
         val pistas = intent.getIntExtra("pistas", 3)
 
-        // Establecer la selección del Spinner según la dificultad recibida
+        // Establecer selección del Spinner
         val dificultadPosition = when (dificultad) {
             "FACIL" -> 0
             "MEDIO" -> 1
@@ -44,9 +43,22 @@ class OpcionesActivity : Activity() {
         }
         spinnerDificultad.setSelection(dificultadPosition)
 
-        // Establecer el valor de las pistas
+        // Establecer el valor inicial de las pistas en el SeekBar y el TextView
         seekBarPistas.progress = pistas
+        textViewPistasValor.text = "Pistas: $pistas"
 
+        // Listener para actualizar el TextView cuando el usuario mueva el SeekBar
+        seekBarPistas.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                textViewPistasValor.text = "Pistas: $progress"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        // Guardar configuración y regresar a MainActivity
         btnGuardar.setOnClickListener {
             val dificultadSeleccionada = spinnerDificultad.selectedItem.toString()
             val pistasSeleccionadas = seekBarPistas.progress
@@ -56,7 +68,7 @@ class OpcionesActivity : Activity() {
             intent.putExtra("pistas", pistasSeleccionadas)
 
             setResult(RESULT_OK, intent)
-            finish() // Cerrar la actividad y devolver los resultados
+            finish()
         }
     }
 }

@@ -31,6 +31,16 @@
             android:max="3"
             android:progress="3" />
 
+        <TextView
+            android:id="@+id/textViewPistasValor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Pistas: 3"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+
         <Button
             android:id="@+id/btnGuardar"
             android:layout_width="match_parent"
