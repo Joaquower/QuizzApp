@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="200dp"
             android:layout_marginBottom="20dp"
-            android:contentDescription="Imagen del tema" />
+            android:contentDescription= "Imagen del tema" />
 
         <!-- Mostrar la pregunta -->
         <TextView
@@ -62,10 +62,10 @@
 
         <!-- Mostrar pistas disponibles -->
         <TextView
-            android:id="@+id/pistasTextView"
+            android:id="@+id/numeroPreguntasTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pistas disponibles: 0"
+            android:text="Pistas usadas "
             android:textSize="18sp"
             android:layout_marginBottom="20dp" />
 
@@ -78,6 +78,36 @@
             android:textSize="18sp"
             android:layout_marginBottom="20dp"
             android:gravity="center" />
+        <!-- Número de preguntas -->
+        <TextView
+            android:id="@+id/pistasusadasTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Número de preguntas: 10"
+            android:textSize="18sp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center" />
+
+        <!-- Pregunta actual -->
+        <TextView
+            android:id="@+id/preguntaActualTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pregunta: 1"
+            android:textSize="18sp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center" />
+
+        <!-- Preguntas respondidas -->
+        <TextView
+            android:id="@+id/preguntasRespondidasTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Respondidas: 0"
+            android:textSize="18sp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center" />
+
 
         <!-- Botón para usar pista -->
         <Button
