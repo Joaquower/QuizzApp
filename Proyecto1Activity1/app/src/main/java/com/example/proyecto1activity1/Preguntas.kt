@@ -162,103 +162,103 @@ fun obtenerPreguntas(): List<Categoria> {
             )
         ),
         Categoria(
-            nombre = "Aviones",
-            imagen = "historia4",
+            nombre = "Star wars",
+            imagen = "SW",
             preguntas = listOf(
                 Pregunta(
-                    texto = "¿Quién fue el primer presidente de EE. UU.?",
+                    texto = "¿A que personaje se le conoce como tambien como darth tyranus",
                     respuestas = listOf(
-                        Respuesta("George Washington", true),
-                        Respuesta("Abraham Lincoln", false),
-                        Respuesta("Thomas Jefferson", false),
-                        Respuesta("Theodore Roosevelt", false)
+                        Respuesta("Conde Dooku", true),
+                        Respuesta("Griveous", false),
+                        Respuesta("Kylo Ren", false),
+                        Respuesta("Maul", false)
                     )
                 ),
                 Pregunta(
-                    texto = "¿Cuál es el río más largo del mundo?",
+                    texto = "¿Quien fue el maestro de Obi Wan?",
                     respuestas = listOf(
-                        Respuesta("Amazonas", true),
-                        Respuesta("Nilo", false),
-                        Respuesta("Yangtsé", false),
-                        Respuesta("Misisipi", false)
+                        Respuesta("Mace Windu", false),
+                        Respuesta("Yaddle", false),
+                        Respuesta("Qui-Gon Jinn", true),
+                        Respuesta("Anakin Skywalker", false)
                     )
                 ),
                 Pregunta(
-                    texto = "¿Cuál es el río más largo del mundo?",
+                    texto = "¿De que color eran los sables de luz de ahsoka durante la guerra de los clones?",
                     respuestas = listOf(
-                        Respuesta("Amazonas", true),
-                        Respuesta("Nilo", false),
-                        Respuesta("Yangtsé", false),
-                        Respuesta("Misisipi", false)
+                        Respuesta("Amarillos", false),
+                        Respuesta("Verdes", true),
+                        Respuesta("Azules", false),
+                        Respuesta("Blancos", false)
                     )
                 ),
                 Pregunta(
-                    texto = "¿Cuál es el río más largo del mundo?",
+                    texto = "¿Quien de los siguientes personajes nunca formo parte del consejo jedi?",
                     respuestas = listOf(
-                        Respuesta("Amazonas", true),
-                        Respuesta("Nilo", false),
-                        Respuesta("Yangtsé", false),
-                        Respuesta("Misisipi", false)
+                        Respuesta("Qui-GoN Jinn", true),
+                        Respuesta("Plo koon", false),
+                        Respuesta("Shaak ti", false),
+                        Respuesta("Mace Windu", false)
                     )
                 ),
                 Pregunta(
-                    texto = "¿Cuál es el río más largo del mundo?",
+                    texto = "¿Durante la guerra de los clones, contra que ejercito se enfrentaba la republica?",
                     respuestas = listOf(
-                        Respuesta("Amazonas", true),
-                        Respuesta("Nilo", false),
-                        Respuesta("Yangtsé", false),
-                        Respuesta("Misisipi", false)
+                        Respuesta("Imperio Galactico", false),
+                        Respuesta("Separatistas", true),
+                        Respuesta("Primera Orden", false),
+                        Respuesta("Rebelión", false)
                     )
                 )
             )
         ),
         Categoria(
-            nombre = "Flores",
-            imagen = "geografia",
+            nombre = "Dark Souls",
+            imagen = "DS",
             preguntas = listOf(
                 Pregunta(
-                    texto = "¿Quién fue el primer presidente de EE. UU.?",
+                    texto = "¿Qué personaje creo el fuego del caos?",
                     respuestas = listOf(
-                        Respuesta("George Washington", true),
-                        Respuesta("Abraham Lincoln", false),
-                        Respuesta("Thomas Jefferson", false),
-                        Respuesta("Theodore Roosevelt", false)
+                        Respuesta("Bruja del caos quelaag", false),
+                        Respuesta("Quelana", false),
+                        Respuesta("La hija del caos", false),
+                        Respuesta("La bruja de Izalith", true)
                     )
                 ),
                 Pregunta(
-                    texto = "¿Cuál es el río más largo del mundo?",
+                    texto = "¿Qué jefe hay que derrotar para entrar a anor londo?",
                     respuestas = listOf(
-                        Respuesta("Amazonas", true),
-                        Respuesta("Nilo", false),
-                        Respuesta("Yangtsé", false),
-                        Respuesta("Misisipi", false)
+                        Respuesta("Sif el Gran lobo gris", false),
+                        Respuesta("Orstein y Smough", false),
+                        Respuesta("Golem de hierro", true),
+                        Respuesta("Seath el descamado", false)
                     )
                 ),
                 Pregunta(
-                    texto = "¿Cuál es el río más largo del mundo?",
+                    texto = "¿Cuantos pactos hay en el juego?",
                     respuestas = listOf(
-                        Respuesta("Amazonas", true),
-                        Respuesta("Nilo", false),
-                        Respuesta("Yangtsé", false),
-                        Respuesta("Misisipi", false)
+                        Respuesta("9", true),
+                        Respuesta("11", false),
+                        Respuesta("10", false),
+                        Respuesta("12", false)
                     )
                 ),
                 Pregunta(
-                    texto = "¿Cuál es el río más largo del mundo?",
+                    texto = "¿De que pacto necesitas ser parte para salvar a solaire?",
                     respuestas = listOf(
-                        Respuesta("Amazonas", true),
-                        Respuesta("Nilo", false),
-                        Respuesta("Yangtsé", false),
-                        Respuesta("Misisipi", false)
+                        Respuesta("Espada de la Luna Oscura", false),
+                        Respuesta("Rey del cementerio", false),
+                        Respuesta("Guerrero de la luz solar", true),
+                        Respuesta("Camino del dragon", false)
                     )
                 ),
                 Pregunta(
-                    texto = "¿Cuál es el río más largo del mundo?",
+                    texto = "¿En que area se encuentra el jefe seth el descamado?",
                     respuestas = listOf(
-                        Respuesta("Amazonas", true),
-                        Respuesta("Nilo", false),
-                        Respuesta("Yangtsé", false),
-                        Respuesta("Misisipi", false)
+                        Respuesta("Ruina de los demonios", false),
+                        Respuesta("Archivos del duke", true),
+                        Respuesta("Fortaleza de Seth", false),
+                        Respuesta("Las catacumbas", false)
                     )
                 )
             )
