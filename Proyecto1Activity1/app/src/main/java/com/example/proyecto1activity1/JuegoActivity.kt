@@ -24,6 +24,10 @@ class JuegoActivity : AppCompatActivity() {
     private var totalPreguntas = 10
     private var dificultad: String = ""
 
+    //dani
+    private var totalpistas = pistasDisponibles
+    private var pistasusadas = 0
+
     private lateinit var preguntaTextView: TextView
     private lateinit var temaImageView: ImageView
     private lateinit var btnRespuesta1: Button
@@ -34,6 +38,11 @@ class JuegoActivity : AppCompatActivity() {
     private lateinit var btnNext: Button
     private lateinit var btnPista: Button
     private lateinit var puntosTextView: TextView
+    private lateinit var pistasTextView: TextView
+    private lateinit var numeroPreguntasTextView: TextView
+    private lateinit var preguntaActualTextView: TextView
+    private lateinit var preguntasRespondidasTextView: TextView
+    private lateinit var pistasusadasTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +66,16 @@ class JuegoActivity : AppCompatActivity() {
         btnNext = findViewById(R.id.btnNext)
         btnPista = findViewById(R.id.btnPista)
         puntosTextView = findViewById(R.id.puntosTextView)
+        pistasTextView = findViewById(R.id.pistasTextView)
+        numeroPreguntasTextView = findViewById(R.id.numeroPreguntasTextView)
+        preguntaActualTextView = findViewById(R.id.preguntaActualTextView)
+        preguntasRespondidasTextView = findViewById(R.id.preguntasRespondidasTextView)
+        pistasusadasTextView = findViewById(R.id.pistasusadasTextView)
 
         // Mostrar la cantidad de pistas desde el principio
         puntosTextView.text = "Pistas: $pistasDisponibles"
+        //Mostrar pista usada dani
+        pistasusadasTextView.text = "Pistas usadas: $pistasusadas"
 
         mostrarPregunta()
 
@@ -75,12 +91,21 @@ class JuegoActivity : AppCompatActivity() {
 
         btnPista.setOnClickListener {
             if (pistasDisponibles > 0) aplicarPista()
+            if(pistasDisponibles > 0 ){
+                aplicarPista()
+                pistasusadas  = pistasusadas +1
+            }
         }
     }
 
     private fun mostrarPregunta() {
         val pregunta = preguntas[preguntaActual]
         preguntaTextView.text = pregunta.texto
+
+        // Actualizamos los contadores
+        preguntaActualTextView.text = "Pregunta: ${preguntaActual + 1}"
+        preguntasRespondidasTextView.text = "Respondidas: ${preguntasContestadas.size}"
+        numeroPreguntasTextView.text = "Número de preguntas: ${preguntas.size}"
 
         val categoriaNombre = obtenerCategoriaDePregunta(pregunta, categorias)
         val categoria = categorias.find { it.nombre == categoriaNombre } ?: categorias[0]
@@ -146,6 +171,9 @@ class JuegoActivity : AppCompatActivity() {
 
         val fueCorrecta = respuesta.correcta
         preguntasContestadas.add(RespuestaEstado(preguntaActual, fueCorrecta))
+
+        // Actualizar la cantidad de preguntas respondidas
+        preguntasRespondidasTextView.text = "Respondidas: ${preguntasContestadas.size}"
 
         if (fueCorrecta) {
             respuestasCorrectas++
@@ -216,6 +244,10 @@ class JuegoActivity : AppCompatActivity() {
         val intent = Intent(this, ResultadosActivity::class.java)
         intent.putExtra("respuestasCorrectas", respuestasCorrectas)
         intent.putExtra("totalPreguntas", totalPreguntas)
+
+        //se agregan los intents de dani que faltan
+        intent.putExtra("totalpistas", totalpistas)
+        intent.putExtra("pistasusadas", pistasusadas)
         startActivity(intent)
         finish()
     }

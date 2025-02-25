@@ -38,6 +38,16 @@
             android:textSize="18sp"
             android:layout_marginBottom="20dp"/>
 
+        <!-- resultado -->
+        <TextView
+            android:id="@+id/txtResultadof"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resultados final"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp"/>
+
         <!-- Botón para regresar o hacer algo más -->
         <Button
             android:id="@+id/btnRegresar"
